@@ -1,0 +1,13 @@
+$schema: https://azuremlschemas.azureedge.net/latest/managedOnlineEndpoint.schema.json
+
+name: insolvency-risk24-endpoint
+
+description: Managed online endpoint for insolvency risk prediction in 2024
+
+auth_mode: key
+
+tags:
+  project: mlops-insolvency
+  model: logistic-regression
+  target: riesgo-24
+  environment: development

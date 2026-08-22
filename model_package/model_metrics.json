@@ -1,0 +1,19 @@
+{
+    "target": "riesgo_24",
+    "model_type": "logistic_regression",
+    "k_final": 35,
+    "threshold_final": 0.48,
+    "roc_auc_validation": 0.907338038364097,
+    "pr_auc_validation": 0.10787352839971447,
+    "threshold": 0.48,
+    "precision": 0.07368421052631578,
+    "recall": 0.7,
+    "f1_score": 0.13333333333333333,
+    "mcc": 0.20583843196313736,
+    "error_tipo_I": 0.09554831704668838,
+    "error_tipo_II": 0.3,
+    "TP": 42,
+    "FN": 18,
+    "FP": 528,
+    "TN": 4998
+}

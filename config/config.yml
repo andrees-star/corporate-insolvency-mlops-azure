@@ -1,0 +1,135 @@
+project:
+  name: mlops-insolvency-project
+  version: 0.1.0
+
+data:
+  raw_path: data/raw/2df_final_completo_23.xlsx
+  processed_path: data/processed/df_processed.csv
+
+target:
+  name: riesgo_24
+
+features:
+  vars_modelo:
+    - raz
+    - teso
+    - rota
+    - margenb
+    - margen
+    - margen_operacional
+    - ractiv
+    - rpatri
+    - activos_pasivos
+    - niven
+    - apalc
+    - apaltot
+    - pasivo_corto_pasivo_total
+    - ctno_ventas_preciso
+
+model:
+  output_path: models/logistic_regression_riesgo24.pkl
+  model_type: logistic_regression
+
+training:
+  test_size: 0.2
+  random_state: 42
+  cv_folds: 5
+
+winsorization:
+  default_limits:
+    lower: 0.01
+    upper: 0.99
+
+  cuts:
+    raz: [0.01, 0.99]
+    teso: [0.01, 0.99]
+    margen: [0.01, 0.99]
+    margen_operacional: [0.01, 0.99]
+    activos_pasivos: [0.01, 0.99]
+    apalc: [0.01, 0.99]
+    apaltot: [0.01, 0.99]
+    ctno_ventas_preciso: [0.01, 0.99]
+    rota: [0.005, 0.995]
+    margenb: [0.005, 0.995]
+    ractiv: [0.005, 0.995]
+    rpatri: [0.005, 0.995]
+    niven: [0.005, 0.995]
+    pasivo_corto_pasivo_total: [0.005, 0.995]
+
+hyperparameters:
+  logistic_regression:
+    solver: lbfgs
+    max_iter: 5000
+
+manual_weight_tuning:
+  k_values: [20, 25, 30, 35]
+
+threshold_tuning:
+  thresholds: [0.40, 0.42, 0.45, 0.48, 0.50]
+  recall_min_primary: 0.50
+  error_tipo_I_max_primary: 0.10
+  recall_min_fallback: 0.45
+  error_tipo_I_max_fallback: 0.
+  
+  preprocessing:
+  indicators:
+    - raz
+    - teso
+    - rota
+    - margenb
+    - margen
+    - margen_operacional
+    - ractiv
+    - rpatri
+    - activos_pasivos
+    - niven
+    - apalc
+    - apaltot
+    - pasivo_corto_pasivo_total
+    - ctno_ventas_preciso
+
+  winsorization:
+    vars_1_99:
+      lower: 0.01
+      upper: 0.99
+      columns:
+        - raz
+        - teso
+        - margen
+        - margen_operacional
+        - activos_pasivos
+        - apalc
+        - apaltot
+        - ctno_ventas_preciso
+
+    vars_05_995:
+      lower: 0.005
+      upper: 0.995
+      columns:
+        - rota
+        - margenb
+        - ractiv
+        - rpatri
+        - niven
+        - pasivo_corto_pasivo_total
+
+  output_features:
+    - raz_win
+    - teso_win
+    - rota_win
+    - margenb_win
+    - margen_win
+    - margen_operacional_win
+    - ractiv_win
+    - rpatri_win
+    - activos_pasivos_win
+    - niven_win
+    - apalc_win
+    - apaltot_win
+    - pasivo_corto_pasivo_total_win
+    - ctno_ventas_preciso_win
+
+outputs:
+  validation_report: outputs/data_validation_report.txt
+  metrics_report: outputs/model_metrics.json
+  tuning_results: outputs/tuning_results.csv

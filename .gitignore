@@ -1,0 +1,47 @@
+# Datos empresariales y Excel
+data/raw/
+data/processed/
+data/scoring/
+*.xlsx
+*.xls
+*.csv
+
+# Modelos binarios
+models/*.pkl
+model_package/*.pkl
+*.joblib
+
+# Resultados y predicciones
+outputs/
+
+# Backups
+*.zip
+*.tar
+*.gz
+
+# Notebooks con resultados o datos embebidos
+notebooks/*.ipynb
+.ipynb_checkpoints/
+
+# Archivos temporales de Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Entornos locales
+.venv/
+venv/
+env/
+.env
+
+# Credenciales y secretos
+credentials*
+secrets*
+*.pem
+*.key
+.azure/
+
+# Archivos del sistema y del editor
+.DS_Store
+Thumbs.db
+.vscode/
