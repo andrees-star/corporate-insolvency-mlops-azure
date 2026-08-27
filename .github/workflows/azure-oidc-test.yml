@@ -1,0 +1,35 @@
+name: Azure OIDC Connection Test
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  test-azure-login:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download repository code
+        uses: actions/checkout@v4
+
+      - name: Login to Azure using OIDC
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Verify Azure account
+        run: |
+          az account show --output table
+
+      - name: Verify Azure ML workspace
+        run: |
+          az extension add --name ml --upgrade
+          az ml workspace show \
+            --name mlw-mlops-insolvency \
+            --resource-group rg-mlops-insolvency \
+            --output table
