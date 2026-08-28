@@ -1,0 +1,40 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandJob.schema.json
+
+type: command
+
+display_name: train-insolvency-risk24
+experiment_name: insolvency-risk24-training
+
+description: Train and evaluate the corporate insolvency Logistic Regression model.
+
+code: ..
+
+command: >-
+  python src/07_azure_train_job.py
+  --input-data ${{inputs.training_data}}
+  --output-dir ${{outputs.training_artifacts}}
+
+inputs:
+  training_data:
+    type: uri_file
+    path: azureml:insolvency-financial-data:1
+    mode: download
+
+outputs:
+  training_artifacts:
+    type: uri_folder
+    mode: upload
+
+environment: azureml:mlops-insolvency-env:2
+
+compute: azureml:cpu-cluster
+
+resources:
+  instance_count: 1
+
+tags:
+  project: mlops-insolvency
+  model: logistic-regression
+  target: riesgo-24
+  data-version: "1"
+  environment: development
