@@ -1,0 +1,46 @@
+name: Register Azure ML Environment
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  register-environment:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download repository code
+        uses: actions/checkout@v4
+
+      - name: Login to Azure using OIDC
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Install Azure ML CLI extension
+        run: |
+          az extension add --name ml --upgrade
+
+      - name: Register Azure ML environment version 2
+        run: |
+          az ml environment create \
+            --name mlops-insolvency-env \
+            --version 2 \
+            --conda-file environment/conda.yml \
+            --image mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04:latest \
+            --resource-group rg-mlops-insolvency \
+            --workspace-name mlw-mlops-insolvency
+
+      - name: Verify registered environment
+        run: |
+          az ml environment show \
+            --name mlops-insolvency-env \
+            --version 2 \
+            --resource-group rg-mlops-insolvency \
+            --workspace-name mlw-mlops-insolvency \
+            --output table
