@@ -1,0 +1,70 @@
+name: Train Model in Azure ML
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  validate-and-train:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download repository code
+        uses: actions/checkout@v4
+
+      - name: Configure Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-dev.txt
+
+      - name: Run automated tests
+        run: |
+          python -m pytest tests/ -v
+
+      - name: Login to Azure using OIDC
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Install Azure ML CLI extension
+        run: |
+          az extension add --name ml --upgrade
+
+      - name: Submit Azure ML training job
+        id: submit-job
+        run: |
+          JOB_NAME=$(az ml job create \
+            --file azureml/train-job.yml \
+            --resource-group rg-mlops-insolvency \
+            --workspace-name mlw-mlops-insolvency \
+            --query name \
+            --output tsv)
+
+          echo "job_name=$JOB_NAME" >> "$GITHUB_OUTPUT"
+          echo "Azure ML job submitted: $JOB_NAME"
+
+      - name: Stream Azure ML training logs
+        run: |
+          az ml job stream \
+            --name ${{ steps.submit-job.outputs.job_name }} \
+            --resource-group rg-mlops-insolvency \
+            --workspace-name mlw-mlops-insolvency
+
+      - name: Verify Azure ML job status
+        run: |
+          az ml job show \
+            --name ${{ steps.submit-job.outputs.job_name }} \
+            --resource-group rg-mlops-insolvency \
+            --workspace-name mlw-mlops-insolvency \
+            --query "{name:name,status:status,display_name:display_name}" \
+            --output table
