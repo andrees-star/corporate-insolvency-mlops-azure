@@ -60,6 +60,29 @@ jobs:
             --resource-group rg-mlops-insolvency \
             --workspace-name mlw-mlops-insolvency
 
+      - name: Download Azure ML training artifacts
+        run: |
+          az ml job download \
+            --name ${{ steps.submit-job.outputs.job_name }} \
+            --resource-group rg-mlops-insolvency \
+            --workspace-name mlw-mlops-insolvency \
+            --download-path downloaded-job \
+            --all
+
+      - name: Run model quality gates
+        run: |
+          METRICS_PATH=$(find downloaded-job -type f -name "model_metrics.json" | head -n 1)
+
+          if [ -z "$METRICS_PATH" ]; then
+            echo "model_metrics.json was not found in the Azure ML job outputs."
+            exit 1
+          fi
+
+          echo "Metrics file found: $METRICS_PATH"
+
+          python src/08_quality_gate.py \
+            --metrics-path "$METRICS_PATH"
+
       - name: Verify Azure ML job status
         run: |
           az ml job show \
@@ -67,4 +90,4 @@ jobs:
             --resource-group rg-mlops-insolvency \
             --workspace-name mlw-mlops-insolvency \
             --query "{name:name,status:status,display_name:display_name}" \
-            --output table
+            --output table   
