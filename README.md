@@ -1,5 +1,55 @@
+## MLOps Architecture
 
+The solution implements the following end-to-end workflow:
 
+```text
+Historical financial data
+        |
+        v
+Data validation
+        |
+        v
+Feature selection and preprocessing
+        |
+        v
+Leakage-safe training pipeline
+  - Winsorization
+  - Yeo-Johnson transformation
+  - Logistic Regression
+        |
+        v
+Cross-validation and threshold tuning
+        |
+        v
+Serialized model artifact
+        |
+        v
+Azure ML Model Registry
+        |
+        v
+Managed Online Endpoint
+        |
+        v
+Excel file with new companies
+        |
+        v
+Validation of required financial indicators
+        |
+        v
+Conversion of Excel rows to JSON
+        |
+        v
+Risk probabilities and classifications
+        |
+        v
+Excel file with prediction results
+```
+
+The architecture covers the complete lifecycle of the corporate insolvency model. Historical financial data is validated and transformed into the 14 financial indicators required by the model. A leakage-safe pipeline applies winsorization and Yeo-Johnson transformation before training the Logistic Regression model.
+
+Cross-validation and threshold tuning are used to evaluate the model and determine the appropriate risk-classification threshold. The resulting model artifact is registered in Azure Machine Learning and can be deployed through a Managed Online Endpoint.
+
+For business use, new company records can be submitted through an Excel file. The required financial indicators are validated and converted into JSON requests. The model then generates an insolvency risk probability and classification, which are returned in a new Excel file.
 
 # Corporate Insolvency Prediction with MLOps on Azure
 
@@ -11,7 +61,6 @@ The project implements a Logistic Regression model for the target `riesgo_24`, w
 - `0` indicates that the company did not enter an insolvency process during 2024.
 
 The solution includes data validation, preprocessing, model training, threshold optimization, model registration, real-time deployment, batch scoring, and Excel-based inference.
-
 
 ---
 
@@ -30,16 +79,23 @@ The model is designed to support:
 
 The model should be interpreted as an early-warning tool and not as an automatic insolvency decision mechanism.
 
-
-
 ---
 
-## Dataset
+Dataset
 
-The original dataset contains:
+The original dataset was prepared to support two corporate insolvency prediction scenarios. However, the current Machine Learning and MLOps implementation focuses exclusively on the 2024 scenario.
+
+The target variable used in this project is `riesgo_24`, where:
+
+- `1` indicates that a company entered a reorganization or liquidation process during 2024.
+- `0` indicates that the company did not enter an insolvency process during 2024.
+
+Companies that had already entered an insolvency process before the end of 2023 were excluded. This ensures that the model predicts new insolvency events during 2024 rather than identifying companies that were already insolvent.
+
+The dataset used for the 2024 modeling exercise contains:
 
 - **31,276 company records**
-- **57 variables**
+- **57 original variables**
 - Financial statements and financial ratios
 - Binary target: `riesgo_24`
 - Positive cases: **339**
@@ -48,12 +104,7 @@ The original dataset contains:
 
 The dataset presents a severe class imbalance because insolvency cases represent only a small percentage of the total observations.
 
-Due to confidentiality and privacy considerations, the original dataset, company identifiers, business names, scoring files, and individual prediction results are not included in this public repository.
-
-
-
-
----
+Although the source information was prepared for two prediction scenarios, the results, metrics, model artifacts, Azure Machine Learning workflows, and scoring processes documented in this project correspond only to the 2024 scenario.
 
 ## Model and Financial Features
 
@@ -91,8 +142,6 @@ The training process includes:
 
 Winsorization and Yeo-Johnson transformations are fitted only on the training data inside the scikit-learn Pipeline. This design reduces the risk of data leakage from the validation sample.
 
-
-
 ---
 
 ## Model Performance
@@ -123,70 +172,17 @@ The model detected **70% of the actual insolvency cases** in the validation samp
 
 The relatively low precision reflects the severe class imbalance. Therefore, the model is intended to generate an early-warning shortlist for additional financial analysis rather than make fully automated business decisions.
 
-
 ---
 
 ## MLOps Architecture
 
 The solution implements the following end-to-end workflow:
 
-```text
-Historical financial data
-        |
-        v
-Data validation
-        |
-        v
-Feature selection and preprocessing
-        |
-        v
-Leakage-safe training pipeline
-  - Winsorization
-  - Yeo-Johnson transformation
-  - Logistic Regression
-        |
-        v
-Cross-validation and threshold tuning
-        |
-        v
-Serialized model artifact
-        |
-        v
-Azure ML Model Registry
-        |
-        v
-Managed Online Endpoint
-        |
-        v
-JSON or Excel-based scoring
-        |
-        v
-Risk probabilities and classifications
+The architecture covers the complete lifecycle of the corporate insolvency model. Historical financial data is validated and transformed into the 14 financial indicators required by the model. A leakage-safe pipeline applies winsorization and Yeo-Johnson transformation before training the Logistic Regression model.
 
----
+Cross-validation and threshold tuning are used to evaluate the model and determine the appropriate risk-classification threshold. The resulting model artifact is registered in Azure Machine Learning and can be deployed through a Managed Online Endpoint.
 
-## Excel-Based Scoring
-
-The project includes a practical business workflow for scoring new companies from an Excel file:
-
-```text
-Excel file with new companies
-        |
-        v
-Validation of required financial indicators
-        |
-        v
-Conversion of Excel rows to JSON
-        |
-        v
-Azure ML Managed Online Endpoint
-        |
-        v
-Probability and risk classification
-        |
-        v
-Excel file with prediction results
-```
+For business use, new company records can be submitted through an Excel file. The required financial indicators are validated and converted into JSON requests. The model then generates an insolvency risk probability and classification, which are returned in a new Excel file.
 
 The input Excel file can contain additional accounting and descriptive columns. The scoring script selects only the 14 financial indicators required by the model.
 
@@ -201,16 +197,25 @@ A real scoring test was completed with five companies. The endpoint received the
 
 Company identifiers, business names, input files, and individual prediction results are excluded from the public repository to protect confidential information.
 
-
 ---
 
 ## Project Structure
 
 ```text
-mlops-insolvency-project/
+
+
+```text
+MLOPS-INSOLVENCY-PROJECT/
+├── .github/
+│   └── workflows/
+│       ├── azure-oidc-test.yml
+│       ├── ci.yml
+│       ├── register-environment.yml
+│       └── train-model.yml
 ├── azureml/
+│   ├── deployment.yml
 │   ├── endpoint.yml
-│   └── deployment.yml
+│   └── train-job.yml
 ├── config/
 │   └── config.yml
 ├── environment/
@@ -222,8 +227,15 @@ mlops-insolvency-project/
 │   ├── 04_test_model_prediction.py
 │   ├── 05_score_new_data.py
 │   ├── 06_score_excel_endpoint.py
+│   ├── 07_azure_train_job.py
+│   ├── 08_quality_gate.py
 │   ├── custom_transformers.py
 │   └── score.py
+├── tests/
+│   ├── test_custom_transformers.py
+│   ├── test_model_pipeline.py
+│   ├── test_score.py
+│   └── test_yaml_files.py
 ├── data/
 │   ├── raw/
 │   ├── processed/
@@ -232,26 +244,35 @@ mlops-insolvency-project/
 ├── model_package/
 ├── notebooks/
 ├── outputs/
+├── .amlignore
 ├── .gitignore
-└── README.md
+├── DECISIONS.md
+├── PROGRESS.md
+├── README.md
+└── requirements-dev.txt
 ```
 
 ### Main Folders
 
-- `azureml/`: Azure ML endpoint and deployment configurations.
-- `config/`: centralized project and model configuration.
-- `environment/`: Python and package dependencies.
-- `src/`: validation, preprocessing, training, scoring, and inference scripts.
-- `data/raw/`: original private datasets.
-- `data/processed/`: modeling datasets generated by the preprocessing pipeline.
-- `data/scoring/`: new companies submitted for prediction.
-- `models/`: locally serialized model artifacts.
-- `model_package/`: deployment package containing the model and custom transformer.
-- `notebooks/`: exploratory analysis and experimentation.
-- `outputs/`: validation reports, metrics, tuning results, and predictions.
+### Main Folders
 
-Private data, trained model binaries, prediction results, backups, and credentials are excluded from GitHub through `.gitignore`.
+- `.github/workflows/`: GitHub Actions workflows for continuous integration, Azure authentication, environment registration, automated training, quality gates, and approved-model registration.
+- `azureml/`: Azure Machine Learning configurations for training jobs, endpoints, and deployments.
+- `config/`: Centralized project, model, preprocessing, and training configuration.
+- `environment/`: Conda environment and package dependencies used by Azure Machine Learning.
+- `src/`: Data validation, preprocessing, model training, quality-gate, scoring, and inference scripts.
+- `tests/`: Automated tests for model components, scoring, pipelines, and YAML configuration files.
+- `data/raw/`: Original source datasets used by the project.
+- `data/processed/`: Modeling datasets generated by the preprocessing workflow.
+- `data/scoring/`: Excel files containing new companies submitted for prediction.
+- `models/`: Locally serialized model artifacts.
+- `model_package/`: Model deployment package containing the trained model, metrics, and custom transformer.
+- `notebooks/`: Exploratory analysis and model experimentation.
+- `outputs/`: Validation reports, model metrics, tuning results, and prediction outputs.
 
+Local environments, credentials, temporary files, private artifacts, and datasets not selected for publication are excluded from GitHub through `.gitignore`.
+
+Files that are intentionally published for the project portfolio, such as the public Excel dataset and the article PDF, are managed separately in the portfolio repository.
 
 ---
 
@@ -277,26 +298,24 @@ The project uses:
 
 ## Completed Milestones
 
-- [x] Azure Machine Learning workspace configuration
-- [x] Cost budget and resource management
-- [x] Data validation
-- [x] Reproducible preprocessing
-- [x] Leakage-safe winsorization
-- [x] Yeo-Johnson transformation
-- [x] Logistic Regression training
-- [x] Stratified cross-validation
-- [x] Class-weight tuning
-- [x] Decision-threshold optimization
-- [x] Model serialization
-- [x] Batch scoring
-- [x] Azure ML Model Registry
-- [x] Azure ML environment registration
-- [x] Managed Online Endpoint deployment
-- [x] Real-time JSON inference
-- [x] Excel-to-endpoint scoring
-- [x] Cost-safe endpoint and deployment deletion
-
-
+- [X] Azure Machine Learning workspace configuration
+- [X] Cost budget and resource management
+- [X] Data validation
+- [X] Reproducible preprocessing
+- [X] Leakage-safe winsorization
+- [X] Yeo-Johnson transformation
+- [X] Logistic Regression training
+- [X] Stratified cross-validation
+- [X] Class-weight tuning
+- [X] Decision-threshold optimization
+- [X] Model serialization
+- [X] Batch scoring
+- [X] Azure ML Model Registry
+- [X] Azure ML environment registration
+- [X] Managed Online Endpoint deployment
+- [X] Real-time JSON inference
+- [X] Excel-to-endpoint scoring
+- [X] Cost-safe endpoint and deployment deletion
 
 ---
 
@@ -320,6 +339,11 @@ The next phases of the project include:
 The final automated workflow will follow this structure:
 
 ```text
+## Target MLOps Workflow
+
+The target MLOps workflow will follow this structure:
+
+```text
 GitHub repository
         |
         v
@@ -338,7 +362,19 @@ Model evaluation and quality gates
 Azure ML Model Registry
         |
         v
-Approved model deployment
+FastAPI prediction service
+        |
+        v
+Docker container
+        |
+        v
+Controlled model deployment
+        |
+        v
+JSON or Excel-based scoring
+        |
+        v
+Risk probabilities and classifications
         |
         v
 Production monitoring
@@ -348,9 +384,4 @@ Drift detection or new labeled data
         |
         v
 Controlled model retraining
-``
-
-
-
-
 ```
