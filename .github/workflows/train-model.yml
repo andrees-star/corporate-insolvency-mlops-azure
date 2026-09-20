@@ -53,12 +53,35 @@ jobs:
           echo "job_name=$JOB_NAME" >> "$GITHUB_OUTPUT"
           echo "Azure ML job submitted: $JOB_NAME"
 
-      - name: Stream Azure ML training logs
+      - name: Wait for Azure ML training job
         run: |
-          az ml job stream \
-            --name ${{ steps.submit-job.outputs.job_name }} \
-            --resource-group rg-mlops-insolvency \
-            --workspace-name mlw-mlops-insolvency
+          JOB_NAME="${{ steps.submit-job.outputs.job_name }}"
+
+          for attempt in {1..120}; do
+            STATUS=$(az ml job show \
+              --name "$JOB_NAME" \
+              --resource-group rg-mlops-insolvency \
+              --workspace-name mlw-mlops-insolvency \
+              --query status \
+              --output tsv)
+
+            echo "Azure ML job status: $STATUS"
+
+            if [ "$STATUS" = "Completed" ]; then
+              echo "Azure ML training completed successfully."
+              exit 0
+            fi
+
+            if [ "$STATUS" = "Failed" ] || [ "$STATUS" = "Canceled" ]; then
+              echo "Azure ML training ended with status: $STATUS"
+              exit 1
+            fi
+
+            sleep 30
+          done
+
+          echo "Timed out waiting for Azure ML training job."
+          exit 1
 
       - name: Download Azure ML training artifacts
         run: |
@@ -82,8 +105,6 @@ jobs:
 
           python src/08_quality_gate.py \
             --metrics-path "$METRICS_PATH"
-
-    
 
       - name: Register approved model
         id: register-model
@@ -110,7 +131,6 @@ jobs:
             --workspace-name mlw-mlops-insolvency \
             --query "{name:name,version:version,type:type,path:path}" \
             --output table
-        
 
       - name: Verify Azure ML job status
         run: |
@@ -119,4 +139,4 @@ jobs:
             --resource-group rg-mlops-insolvency \
             --workspace-name mlw-mlops-insolvency \
             --query "{name:name,status:status,display_name:display_name}" \
-            --output table   
+            --output table
