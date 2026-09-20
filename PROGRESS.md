@@ -1,4 +1,3 @@
-
 # Project Progress
 
 Last updated: 2026-09-10
@@ -30,12 +29,12 @@ Last updated: 2026-09-10
 - [X] Complete previous real-time JSON inference test
 - [X] Complete previous Excel-to-endpoint scoring test
 - [X] Delete previous endpoint and deployment to control costs
-- [ ] Execute the new automated training workflow
-- [ ] Verify successful Azure ML training job
-- [ ] Verify training artifacts
-- [ ] Verify automatic model registration
-- [ ] Verify the new registered model version
-- [ ] Confirm that `cpu-cluster` returns to 0 nodes
+- [X] Execute the new automated training workflow
+- [X] Verify successful Azure ML training job
+- [X] Verify training artifacts
+- [X] Verify automatic model registration
+- [X] Verify the new registered model version
+- [X] Confirm that `cpu-cluster` returns to 0 nodes
 
 ## Phase 3: Continuous Integration and Automation
 
@@ -50,16 +49,16 @@ Last updated: 2026-09-10
 - [X] Integrate quality gates into the training workflow
 - [X] Add approved-model registration to `train-model.yml`
 - [X] Add registered-model verification to `train-model.yml`
-- [ ] Validate the complete workflow from GitHub Actions to Azure ML
+- [X] Validate the complete workflow from GitHub Actions to Azure ML
 
 ## Phase 4: Documentation and Version Control
 
 - [X] Configure `.gitignore`
 - [X] Configure and validate `.amlignore`
 - [X] Publish `.amlignore` in commit `f46066a`
-- [ ] Update `README.md`
+- [X] Update `README.md`
 - [X] Create `PROGRESS.md`
-- [ ] Create `DECISIONS.md`
+- [X] Create `DECISIONS.md`
 - [ ] Define the version-tagging convention
 - [ ] Create the first stable Git tag
 
@@ -73,11 +72,14 @@ Last updated: 2026-09-10
 - [ ] Implement scheduled retraining
 - [ ] Implement champion-challenger model management
 
+
+
 ## Current Project Status
 
-Current phase: Documentation before automated workflow validation
-Last completed step: `.amlignore` validated, committed, and published
-Local test result: 11 tests passed in 2.20 seconds
-Next step: Complete project documentation
-Next MLOps execution step: Run `Train Model in Azure ML` from GitHub Actions
+Current phase: Versioning and controlled deployment planning
+Last completed step: Complete GitHub Actions to Azure ML workflow validated
+Validation result: Model approved and registered automatically as version `2`
+Compute result: `cpu-cluster` returned to `0` nodes
+Estimated project progress: **85%**
+Next step: Define the Git version-tagging convention and create the first stable tag
 Blocked by: No confirmed blocker

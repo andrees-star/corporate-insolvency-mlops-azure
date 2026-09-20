@@ -1,5 +1,3 @@
-
-
 # Project Decision Log
 
 This file records the technical and methodological decisions made during the project. Each entry explains what was decided, why it was incorporated, which component uses it, how another person can validate it, and its current implementation status.
@@ -165,3 +163,79 @@ An incorrect exclusion rule could prevent Azure ML from receiving a required fil
 ### Status
 
 Validated, committed as `f46066a`, and published to GitHub. Final confirmation will occur during the complete Azure ML workflow execution.
+
+
+
+---
+
+## 2026-09-19: Complete Azure ML Workflow Validation
+
+### Decision
+
+Replace `az ml job stream` with periodic Azure ML job-status checks using `az ml job show`.
+
+### Reason
+
+The first GitHub Actions execution failed with `Incorrect padding` while streaming logs, although the Azure ML training job completed successfully.
+
+The log-streaming failure prevented the workflow from continuing to the quality gates and automatic model registration.
+
+### Implementation
+
+The workflow now checks the Azure ML job status every 30 seconds:
+
+- `Completed`: continues the workflow.
+- `Failed` or `Canceled`: stops the workflow.
+- Active status: waits and checks again.
+- Timeout: stops after approximately 60 minutes.
+
+### Validation Evidence
+
+- 11 automated tests passed locally.
+- Azure ML training completed successfully.
+- Training artifacts were generated successfully.
+- Model quality gates passed.
+- The approved model was registered automatically as version `2`.
+- The registered model version was verified.
+- The complete GitHub Actions workflow finished successfully.
+- `cpu-cluster` returned to `0` nodes.
+
+### Result
+
+The complete workflow from GitHub Actions to Azure Machine Learning was validated successfully.
+
+### Status
+
+Implemented, tested, published, and operational.
+
+
+
+### Estimated Project Progress
+
+**85% completed**
+
+This estimate reflects the successful end-to-end validation of:
+
+- GitHub Actions automation
+- Azure Machine Learning training
+- Training artifact generation
+- Model quality gates
+- Automatic model registration
+- Registered model verification
+- Compute scale-down to 0 nodes
+
+### Next Steps
+
+1. Update `PROGRESS.md` with the validated workflow results.
+2. Define the Git version-tagging convention.
+3. Create the first stable Git tag.
+4. Implement controlled deployment of approved models.
+5. Develop the FastAPI prediction service.
+6. Add Docker containerization.
+7. Implement production data collection.
+8. Implement data-quality and feature-drift monitoring.
+9. Configure alerts and controlled model retraining.
+
+
+
+---
