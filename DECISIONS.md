@@ -404,4 +404,4 @@ This tag represents the project state with:
 
 ### Status
 
-Versioning convention defined. Tag `v0.8.0` pending creation and publication.
+Versioning convention defined. Tag `v0.8.0` created and published successfully.

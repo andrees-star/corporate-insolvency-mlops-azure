@@ -60,8 +60,8 @@ Last updated: 2026-09-10
 - [X] Create `PROGRESS.md`
 - [X] Create `DECISIONS.md`
 - [X] `Create and publish MODEL_CARD.md`
-- [ ] Define the version-tagging convention
-- [ ] Create the first stable Git tag
+- [X] Define the version-tagging convention
+- [X] Create the first stable Git tag
 
 ## Phase 5: Deployment and Monitoring
 
