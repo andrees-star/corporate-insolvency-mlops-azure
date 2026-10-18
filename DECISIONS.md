@@ -255,6 +255,52 @@ Any retraining must undergo data-quality validation, model evaluation, automated
 
 Created, committed as `4791e61`, and published to GitHub.
 
+---
+
+## Current Project Summary
+
+### Estimated Project Progress
+
+**85% completed**
+
+The estimate reflects the successful implementation and validation of:
+
+- Logistic Regression model development
+- Leakage-safe preprocessing
+- Automated testing with 11 tests
+- GitHub Actions continuous integration
+- OIDC authentication with Azure
+- Azure Machine Learning training
+- Training artifact generation
+- Model quality gates
+- Automatic model registration
+- Registered model version verification
+- Compute scale-down to 0 nodes
+- Project README
+- Project progress tracking
+- Technical decision log
+- Published Model Card
+
+### Current Phase
+
+Versioning and controlled deployment planning.
+
+### Next Steps
+
+1. Define the Git version-tagging convention.
+2. Create the first stable Git tag.
+3. Implement controlled deployment of the approved model.
+4. Implement rollback for failed deployments.
+5. Develop the FastAPI prediction service.
+6. Add Docker containerization.
+7. Implement PSI monitoring for the 14 financial indicators and the risk score.
+8. Implement production inference-data collection.
+9. Implement data-quality and feature-drift monitoring.
+10. Configure operational alerts and controlled retraining.
+
+### Current Blockers
+
+No confirmed blocker.
 
 ---
 
@@ -306,49 +352,56 @@ No confirmed blocker.
 
 ---
 
-## Current Project Summary
+## 2026-10-18: Define the Git Versioning Convention
 
-### Estimated Project Progress
+### Decision
 
-**85% completed**
+Use Semantic Versioning for stable Git releases:
 
-The estimate reflects the successful implementation and validation of:
+```text
+vMAJOR.MINOR.PATCH
+```
 
-- Logistic Regression model development
-- Leakage-safe preprocessing
-- Automated testing with 11 tests
-- GitHub Actions continuous integration
-- OIDC authentication with Azure
-- Azure Machine Learning training
-- Training artifact generation
-- Model quality gates
-- Automatic model registration
-- Registered model version verification
-- Compute scale-down to 0 nodes
-- Project README
-- Project progress tracking
-- Technical decision log
-- Published Model Card
+### Versioning Rules
 
-### Current Phase
+- `MAJOR`: incompatible changes or a major redesign of the production architecture.
+- `MINOR`: new backward-compatible functionality.
+- `PATCH`: backward-compatible bug fixes or minor corrections.
 
-Versioning and controlled deployment planning.
+### Initial Development Versions
 
-### Next Steps
+While the project remains under active development, releases will use the `v0.x.x` series.
 
-1. Define the Git version-tagging convention.
-2. Create the first stable Git tag.
-3. Implement controlled deployment of the approved model.
-4. Implement rollback for failed deployments.
-5. Develop the FastAPI prediction service.
-6. Add Docker containerization.
-7. Implement PSI monitoring for the 14 financial indicators and the risk score.
-8. Implement production inference-data collection.
-9. Implement data-quality and feature-drift monitoring.
-10. Configure operational alerts and controlled retraining.
+Examples:
 
-### Current Blockers
+- `v0.8.0`: workflow validated end to end, model version `2` registered, and Model Card published.
+- `v0.8.1`: minor correction without new functionality.
+- `v0.9.0`: significant new functionality, such as controlled deployment.
+- `v1.0.0`: first complete and stable production-ready release.
 
-No confirmed blocker.
+### Separation Between Git and Azure ML Versions
 
----
+Git tags and Azure Machine Learning model versions represent different objects:
+
+- Git tag `v0.8.0`: stable version of the complete project code, configuration, tests, workflows, and documentation.
+- Azure ML model version `2`: registered model artifact approved by the quality gates.
+
+The relationship between the Git release and the Azure ML model version must be documented in the release notes and Model Card.
+
+### First Stable Tag
+
+The first project tag will be:
+
+```text
+v0.8.0
+```
+
+This tag represents the project state with:
+
+- 11 automated tests
+- GitHub Actions
+
+
+### Status
+
+Versioning convention defined. Tag `v0.8.0` pending creation and publication.
