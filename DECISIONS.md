@@ -164,8 +164,6 @@ An incorrect exclusion rule could prevent Azure ML from receiving a required fil
 
 Validated, committed as `f46066a`, and published to GitHub. Final confirmation will occur during the complete Azure ML workflow execution.
 
-
-
 ---
 
 ## 2026-09-19: Complete Azure ML Workflow Validation
@@ -208,34 +206,149 @@ The complete workflow from GitHub Actions to Azure Machine Learning was validate
 
 Implemented, tested, published, and operational.
 
+## 2026-10-18: Create and Publish the Model Card
 
+### Decision
+
+Create `MODEL_CARD.md` as the central governance document for the approved corporate insolvency model.
+
+### Purpose
+
+Document the model's intended use, prohibited uses, dataset, features, preprocessing, validation metrics, limitations, ethical considerations, human oversight, monitoring, and maintenance requirements.
+
+### Why It Was Incorporated
+
+The model was successfully trained through the automated Azure Machine Learning workflow, passed the quality gates, and was registered as version `2`.
+
+A dedicated Model Card provides transparent documentation before controlled deployment and production monitoring are implemented.
+
+### Components and People That Use It
+
+- Data Science and Machine Learning teams
+- Financial-risk and credit-risk analysts
+- Model-validation teams
+- Project maintainers
+- Future API and deployment workflows
+- Governance and audit reviewers
+
+### Validation
+
+The Model Card was reviewed against:
+
+- `README.md`
+- `PROGRESS.md`
+- `DECISIONS.md`
+- `config/config.yml`
+- Validated Azure ML training results
+- Model version `2`
+- Validation metrics
+- The 11 automated tests
+- Current implementation status
+
+### Key Governance Rule
+
+A PSI value above `0.25` triggers an investigation, not automatic retraining.
+
+Any retraining must undergo data-quality validation, model evaluation, automated testing, quality-gate approval, champion-challenger comparison, and human review before deployment.
+
+### Status
+
+Created, committed as `4791e61`, and published to GitHub.
+
+
+---
+
+## Current Project Summary
 
 ### Estimated Project Progress
 
 **85% completed**
 
-This estimate reflects the successful end-to-end validation of:
+The estimate reflects the successful implementation and validation of:
 
-- GitHub Actions automation
+- Logistic Regression model development
+- Leakage-safe preprocessing
+- Automated testing with 11 tests
+- GitHub Actions continuous integration
+- OIDC authentication with Azure
 - Azure Machine Learning training
 - Training artifact generation
 - Model quality gates
 - Automatic model registration
-- Registered model verification
+- Registered model version verification
 - Compute scale-down to 0 nodes
+- Project README
+- Project progress tracking
+- Technical decision log
+- Published Model Card
+
+### Current Phase
+
+Versioning and controlled deployment planning.
 
 ### Next Steps
 
-1. Update `PROGRESS.md` with the validated workflow results.
-2. Define the Git version-tagging convention.
-3. Create the first stable Git tag.
-4. Implement controlled deployment of approved models.
+1. Define the Git version-tagging convention.
+2. Create the first stable Git tag.
+3. Implement controlled deployment of the approved model.
+4. Implement rollback for failed deployments.
 5. Develop the FastAPI prediction service.
 6. Add Docker containerization.
-7. Implement production data collection.
-8. Implement data-quality and feature-drift monitoring.
-9. Configure alerts and controlled model retraining.
+7. Implement PSI monitoring for the 14 financial indicators and the risk score.
+8. Implement production inference-data collection.
+9. Implement data-quality and feature-drift monitoring.
+10. Configure operational alerts and controlled retraining.
+
+### Current Blockers
+
+No confirmed blocker.
 
 
+---
+
+## Current Project Summary
+
+### Estimated Project Progress
+
+**85% completed**
+
+The estimate reflects the successful implementation and validation of:
+
+- Logistic Regression model development
+- Leakage-safe preprocessing
+- Automated testing with 11 tests
+- GitHub Actions continuous integration
+- OIDC authentication with Azure
+- Azure Machine Learning training
+- Training artifact generation
+- Model quality gates
+- Automatic model registration
+- Registered model version verification
+- Compute scale-down to 0 nodes
+- Project README
+- Project progress tracking
+- Technical decision log
+- Published Model Card
+
+### Current Phase
+
+Versioning and controlled deployment planning.
+
+### Next Steps
+
+1. Define the Git version-tagging convention.
+2. Create the first stable Git tag.
+3. Implement controlled deployment of the approved model.
+4. Implement rollback for failed deployments.
+5. Develop the FastAPI prediction service.
+6. Add Docker containerization.
+7. Implement PSI monitoring for the 14 financial indicators and the risk score.
+8. Implement production inference-data collection.
+9. Implement data-quality and feature-drift monitoring.
+10. Configure operational alerts and controlled retraining.
+
+### Current Blockers
+
+No confirmed blocker.
 
 ---

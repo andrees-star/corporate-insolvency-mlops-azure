@@ -59,6 +59,7 @@ Last updated: 2026-09-10
 - [X] Update `README.md`
 - [X] Create `PROGRESS.md`
 - [X] Create `DECISIONS.md`
+- [X] `Create and publish MODEL_CARD.md`
 - [ ] Define the version-tagging convention
 - [ ] Create the first stable Git tag
 
@@ -71,8 +72,6 @@ Last updated: 2026-09-10
 - [ ] Configure Azure Monitor alerts
 - [ ] Implement scheduled retraining
 - [ ] Implement champion-challenger model management
-
-
 
 ## Current Project Status
 
